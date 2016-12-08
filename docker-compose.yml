@@ -1,0 +1,76 @@
+version: '2'
+services:
+  ciao-keystone:
+    image: clearlinux/keystone
+    ports:
+      - 5000:5000
+      - 35357:35357
+    environment:
+      - IDENTITY_HOST=localhost
+      - KEYSTONE_ADMIN_PASSWORD=secret
+    volumes:
+      - ./certs/ciao-keystone_cert.pem:/etc/nginx/ssl/keystone_cert.pem
+      - ./certs/ciao-keystone_key.pem:/etc/nginx/ssl/keystone_key.pem
+      - ./post-keystone.sh:/usr/bin/post-keystone.sh
+      - ./share:/share
+
+  ciao-ceph:
+    image: ceph/demo
+    network_mode: host
+    environment:
+      - MON_IP=192.168.0.1
+      - CEPH_PUBLIC_NETWORK=192.168.0.0/24
+    volumes:
+      - ./etc/ceph:/etc/ceph
+
+  ciao-scheduler:
+    image: clearlinux/ciao-scheduler
+    network_mode: host
+    volumes:
+      - ./certs/CAcert-localhost.pem:/etc/pki/ciao/CAcert-ciao-dev.pem
+      - ./certs/cert-Scheduler-localhost.pem:/etc/pki/ciao/cert-Scheduler-ciao-dev.pem
+      - $GOPATH/src/github.com/01org/ciao:/root/go/src/github.com/01org/ciao
+      - ./share:/share
+    environment:
+      - IDENTITY_HOST=localhost
+
+  ciao-launcher:
+    image: clearlinux/ciao-launcher
+    network_mode: host
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - ./etc/ceph:/etc/ceph
+      - /dev:/dev
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./certs/CAcert-localhost.pem:/etc/pki/ciao/CAcert-ciao-dev.pem
+      - ./certs/cert-CNAgent-NetworkingAgent-localhost.pem:/etc/pki/ciao/cert-CNAgent-NetworkingAgent-ciao-dev.pem
+      - $GOPATH/src/github.com/01org/ciao:/root/go/src/github.com/01org/ciao
+      - ./share:/share
+    depends_on:
+      - ciao-scheduler
+      - ciao-ceph
+
+  ciao-controller:
+    image: clearlinux/ciao-controller
+    network_mode: host
+    environment:
+      - IDENTITY_HOST=localhost
+      - CONTROLLER_HOST=localhost
+    volumes:
+      - ./etc/ceph:/etc/ceph
+      - ./certs/CAcert-localhost.pem:/etc/pki/ciao/CAcert-ciao-dev.pem
+      - ./certs/cert-Controller-localhost.pem:/etc/pki/ciao/cert-Controller-ciao-dev.pem
+      - ./certs/controller_cert.pem:/etc/pki/ciao/controller_cert.pem
+      - ./certs/controller_key.pem:/etc/pki/ciao/controller_key.pem
+      - ./certs/ciao-keystone_cert.pem:/etc/ca-certs/cacert.pem
+      - $GOPATH/src/github.com/01org/ciao:/root/go/src/github.com/01org/ciao
+      - ./post-controller.sh:/usr/bin/post-controller.sh
+      - ./share:/share
+    depends_on:
+      - ciao-keystone
+      - ciao-scheduler
+      - ciao-ceph
