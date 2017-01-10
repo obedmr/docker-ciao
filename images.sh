@@ -6,8 +6,11 @@ if [ ! "$(ls -A share/images)" ]; then
     mkdir -p share/images
     cd share/images
 
+    # Ubuntu Image
+    curl -Ok https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
+    
     # Fedora Image
-    #curl -O https://dl.fedoraproject.org/pub/fedora/linux/releases/23/Cloud/x86_64/Images/Fedora-Cloud-Base-23-20151030.x86_64.qcow2
+    curl -O http://repo.atlantic.net/fedora/linux/releases/24/CloudImages/x86_64/images/Fedora-Cloud-Base-24-1.2.x86_64.qcow2
 
     # ClearLinux image
     LATEST=$(curl https://download.clearlinux.org/current/latest)
