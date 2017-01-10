@@ -17,20 +17,22 @@ cd certs/
 cp ../req.conf ./
 sed -i.bak s/HOST/$HOST/g req.conf
 
+HOSTS=$HOST,$(hostname)
+
 # Scheduler
-$GOPATH/bin/ciao-cert -anchor -role scheduler -email=ciao-dev@example.com -organization=Ciao -ip=192.168.0.1 -host=$HOST -verify
+$GOPATH/bin/ciao-cert -anchor -role scheduler -email=ciao-dev@example.com -organization=Ciao -ip=192.168.0.1 -host=$HOSTS -verify
 
 # Compute,Network
-$GOPATH/bin/ciao-cert -role agent,netagent -anchor-cert cert-Scheduler-$HOST.pem -email=ciao-dev@example.com -organization=Ciao -host=$HOST -ip=192.168.0.1 -verify
+$GOPATH/bin/ciao-cert -role agent,netagent -anchor-cert cert-Scheduler-$HOST.pem -email=ciao-dev@example.com -organization=Ciao -host=$HOSTS -ip=192.168.0.1 -verify
 
 # Networking
-$GOPATH/bin/ciao-cert -role netagent -anchor-cert cert-Scheduler-$HOST.pem -email=ciao-dev@example.com -organization=Ciao -host=$HOST -ip=192.168.0.1 -verify
+$GOPATH/bin/ciao-cert -role netagent -anchor-cert cert-Scheduler-$HOST.pem -email=ciao-dev@example.com -organization=Ciao -host=$HOSTS -ip=192.168.0.1 -verify
 
 # CNCI Agent
-$GOPATH/bin/ciao-cert -role cnciagent -anchor-cert cert-Scheduler-$HOST.pem -email=ciao-dev@example.com -organization=Ciao -host=$HOST -ip=192.168.0.1 -verify
+$GOPATH/bin/ciao-cert -role cnciagent -anchor-cert cert-Scheduler-$HOST.pem -email=ciao-dev@example.com -organization=Ciao -host=$HOSTS -ip=192.168.0.1 -verify
 
 # Controller
-$GOPATH/bin/ciao-cert -role controller -anchor-cert cert-Scheduler-$HOST.pem -email=ciao-dev@example.com -organization=Ciao -host=$HOST -ip=192.168.0.1 -verify
+$GOPATH/bin/ciao-cert -role controller -anchor-cert cert-Scheduler-$HOST.pem -email=ciao-dev@example.com -organization=Ciao -host=$HOSTS -ip=192.168.0.1 -verify
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout controller_key.pem -out controller_cert.pem -config req.conf
 
 # Image
