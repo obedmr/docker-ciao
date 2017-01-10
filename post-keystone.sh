@@ -27,3 +27,12 @@ openstack endpoint create --region RegionOne \
 
 openstack endpoint create --region RegionOne \
           image admin https://localhost:9292
+
+# Create CIAO Demo project/user
+openstack project create --domain default \
+	  --description "CIAO Demo Project" demo
+
+openstack user create --domain default \
+	  --password demo demo
+
+openstack role add --project demo --user demo user
