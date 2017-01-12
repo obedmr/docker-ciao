@@ -8,16 +8,10 @@ if [ -z $HOST ] ; then
     exit 1
 fi
 
-
+HOSTS=$HOST,$(hostname)
 rm -rf certs/
 mkdir -p certs/
 cd certs/
-
-# Prepare custom certs file
-cp ../req.conf ./
-sed -i.bak s/HOST/$HOST/g req.conf
-
-HOSTS=$HOST,$(hostname)
 
 # Scheduler
 $GOPATH/bin/ciao-cert -anchor -role scheduler -email=ciao-dev@example.com -organization=Ciao -ip=192.168.0.1 -host=$HOSTS -verify
@@ -33,12 +27,28 @@ $GOPATH/bin/ciao-cert -role cnciagent -anchor-cert cert-Scheduler-$HOST.pem -ema
 
 # Controller
 $GOPATH/bin/ciao-cert -role controller -anchor-cert cert-Scheduler-$HOST.pem -email=ciao-dev@example.com -organization=Ciao -host=$HOSTS -ip=192.168.0.1 -verify
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout controller_key.pem -out controller_cert.pem -config req.conf
+mkdir -p tmp/
+cd tmp/
+$GOPATH/bin/ciao-cert -anchor -role server -email=ciao-dev@example.com -organization=Ciao -ip=192.168.0.1 -host=$HOSTS -verify
+mv CAcert-$HOST.pem ../controller_cert.pem
+mv cert-Server-$HOST.pem   ../controller_key.pem
 
 # Image
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ciao-image_key.pem -out ciao-image_cert.pem -config req.conf
+$GOPATH/bin/ciao-cert -anchor -role server -email=ciao-dev@example.com -organization=Ciao -ip=192.168.0.1 -host=$HOSTS -verify
+mv CAcert-$HOST.pem ../ciao-image_cert.pem
+mv cert-Server-$HOST.pem   ../ciao-image_key.pem
 
 # Keystone
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ciao-keystone_key.pem -out ciao-keystone_cert.pem -config req.conf
+$GOPATH/bin/ciao-cert -anchor -role server -email=ciao-dev@example.com -organization=Ciao -ip=192.168.0.1 -host=$HOSTS -verify
+mv CAcert-$HOST.pem ../ciao-keystone_cert.pem
+mv cert-Server-$HOST.pem   ../ciao-keystone_key.pem
+
+# WebUI
+$GOPATH/bin/ciao-cert -anchor -role server -email=ciao-dev@example.com -organization=Ciao -ip=192.168.0.1 -host=$HOSTS -verify
+mv CAcert-$HOST.pem ../ciao-webui_cert.pem
+mv cert-Server-$HOST.pem   ../ciao-webui_key.pem
+
+cd ..
+rm -rf tmp/
 
 cd ..
