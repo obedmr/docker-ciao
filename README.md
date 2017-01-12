@@ -76,7 +76,7 @@ ciao-cli <your_option>
 <WIP>CIAO webui
 ----------
 You can access your Ciao Cluster webui at:
-https://your-host.example.com:3000
+https://your-host.example.com
 
 CIAO Development
 ----------------

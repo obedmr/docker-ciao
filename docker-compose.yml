@@ -64,8 +64,8 @@ services:
       - ./etc/ceph:/etc/ceph
       - ./certs/CAcert-localhost.pem:/etc/pki/ciao/CAcert-ciao-dev.pem
       - ./certs/cert-Controller-localhost.pem:/etc/pki/ciao/cert-Controller-ciao-dev.pem
-      - ./certs/controller_cert.pem:/etc/pki/ciao/controller_cert.pem
-      - ./certs/controller_key.pem:/etc/pki/ciao/controller_key.pem
+      - ./certs/controller_cert.pem:/etc/pki/ciao/api/controller_cert.pem
+      - ./certs/controller_key.pem:/etc/pki/ciao/api/controller_key.pem
       - ./certs/ciao-keystone_cert.pem:/etc/ca-certs/cacert.pem
       - $GOPATH/src/github.com/01org/ciao:/root/go/src/github.com/01org/ciao
       - ./post-controller.sh:/usr/bin/post-controller.sh
@@ -74,3 +74,18 @@ services:
       - ciao-keystone
       - ciao-scheduler
       - ciao-ceph
+
+  ciao-webui:
+    image: clearlinux/ciao-webui
+    network_mode: host
+    environment:
+      - IDENTITY_HOST=localhost
+      - CONTROLLER_HOST=localhost
+      - STORAGE_HOST=localhost
+    volumes:
+      - ./certs/ciao-webui_cert.pem:/etc/pki/ciao-webui-cert.pem
+      - ./certs/ciao-webui_key.pem:/etc/pki/ciao-webui-key.pem
+      - ./share:/share
+    depends_on:
+      - ciao-keystone
+      - ciao-controller
