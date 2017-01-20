@@ -13,6 +13,7 @@ fi
 function set_macvlan() {
     sudo ip link delete macvlan0
     sudo ip link add name $NET_IFACE type bridge
+    sudo iptables -t nat -A POSTROUTING -o $NET_IFACE -j MASQUERADE
     sudo ip link add link $NET_IFACE name macvlan0 type macvlan mode bridge
     sudo ip addr add 192.168.0.1/24 brd 192.168.0.255 dev macvlan0
     sudo ip link set dev macvlan0 up
