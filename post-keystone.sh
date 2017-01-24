@@ -28,6 +28,19 @@ openstack endpoint create --region RegionOne \
 openstack endpoint create --region RegionOne \
           image admin https://localhost:9292
 
+# Create CIAO Volumen Endpoint
+openstack service create --name cinderv2 \
+          --description "CIAO Block Storage" volumev2
+
+openstack endpoint create --region RegionOne \
+          volumev2 public https://localhost:8776/v2/%\(tenant_id\)s
+
+openstack endpoint create --region RegionOne \
+          volumev2 internal https://localhost:8776/v2/%\(tenant_id\)s
+
+openstack endpoint create --region RegionOne \
+          volumev2 admin https://localhost:8776/v2/%\(tenant_id\)s
+
 # Create CIAO Demo project/user
 openstack project create --domain default \
 	  --description "CIAO Demo Project" demo
