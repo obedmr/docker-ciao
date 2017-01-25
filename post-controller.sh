@@ -4,6 +4,11 @@
 echo Setting Ceph permissions
 ceph auth get-or-create client.ciao -o /etc/ceph/ceph.client.ciao.keyring mon 'allow *' osd 'allow *' mds 'allow'
 
+# Create demorc file
+cp /root/ciaorc /root/demorc
+sed -i s/admin/demo/g /root/demorc
+sed -i s/secret/demo/g /root/demorc
+
 source /root/ciaorc
 
 # Add default images
