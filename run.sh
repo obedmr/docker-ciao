@@ -26,6 +26,16 @@ if [ ! -d "certs/" ] ; then
     ./certs.sh $HOST
     sudo rm -rf share/
     mkdir -p share/images
+    mkdir -p share/ssh
+    cp configuration.yaml share/
+    pushd share/ssh
+    ssh_user=demouser
+    ssh-keygen -f "$ssh_user" -t rsa -N ''
+    chmod 600 "$ssh_user".pub
+    ssh_key=$(< "$ssh_user".pub)
+    popd
+    sed -i "s|ADMIN_SSH_KEY|$ssh_key|" share/configuration.yaml
+    sed -i "s|IDENTITY_HOST|$HOST|" share/configuration.yaml
 fi
 
 # Download / prepare images

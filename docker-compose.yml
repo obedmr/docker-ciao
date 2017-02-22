@@ -30,6 +30,7 @@ services:
       - ./certs/CAcert-localhost.pem:/etc/pki/ciao/CAcert-ciao-dev.pem
       - ./certs/cert-Scheduler-localhost.pem:/etc/pki/ciao/cert-Scheduler-ciao-dev.pem
       - $GOPATH/src/github.com/01org/ciao:/root/go/src/github.com/01org/ciao
+      - ./share/configuration.yaml:/etc/ciao/configuration.yaml
       - ./share:/share
     environment:
       - IDENTITY_HOST=localhost
@@ -69,6 +70,7 @@ services:
       - ./certs/ciao-keystone_cert.pem:/etc/ca-certs/cacert.pem
       - $GOPATH/src/github.com/01org/ciao:/root/go/src/github.com/01org/ciao
       - ./post-controller.sh:/usr/bin/post-controller.sh
+      - ./workloads.sh:/usr/bin/workloads.sh
       - ./share:/share
     depends_on:
       - ciao-keystone
