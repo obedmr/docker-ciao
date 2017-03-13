@@ -17,19 +17,19 @@ cd /share/images/
 
 # CNCI Image
 echo CNCI Image
-ciao-cli image add --file clear-*networking* --name "ciao CNCI image" --id 4e16e743-265a-4bf2-9fd1-57ada0b28904
+ciao-cli image add --file clear-*networking* --name "ciao CNCI image" --id 4e16e743-265a-4bf2-9fd1-57ada0b28904 --visibility internal
 
 # ClearLinux
 echo ClearLinux image
-ciao-cli image add --file clear-*-cloud.img --name "Clear Linux"
+ciao-cli image add --file clear-*-cloud.img --name "Clear Linux" --visibility public
 
 # Fedora 24
 echo Fedora image
-ciao-cli image add --file Fedora-Cloud-Base-24-1.2.x86_64.qcow2 --name "Fedora 24"
+ciao-cli image add --file Fedora-Cloud-Base-24-1.2.x86_64.qcow2 --name "Fedora 24" --visibility public
 
 # Ubuntu Trusty
 echo Ubuntu image
-ciao-cli image add --file trusty-server-cloudimg-amd64-disk1.img --name "Ubuntu Trusty"
+ciao-cli image add --file trusty-server-cloudimg-amd64-disk1.img --name "Ubuntu Trusty" --visibility public
 
 # Workloads
 echo Creating Workloads
